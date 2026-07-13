@@ -3,6 +3,8 @@
 Página web onde apoiadores adicionam a própria foto dentro do círculo da moldura oficial
 **"Fechado com Malaquias"** (pré-candidato a Deputado Estadual) e baixam / compartilham a arte.
 
+**🔗 Link para compartilhar:** https://apoiador-malaquias.vercel.app
+
 ## O que faz
 
 - 📷 **Tirar foto ou escolher da galeria** (funciona no celular e no computador)
