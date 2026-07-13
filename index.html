@@ -116,11 +116,19 @@
       <div class="hint" id="hint">Arraste para posicionar • use o zoom abaixo</div>
     </div>
 
-    <input type="file" id="file" accept="image/*" hidden>
-    <button class="btn big" id="pick" style="margin-top:12px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.2l.9-1.6A1.5 1.5 0 0 1 8.9 3.6h6.2c.6 0 1.1.3 1.3.8L17.3 6h1.2A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.5" r="3.6"/></svg>
-      <span id="pickLabel">Tirar foto ou escolher da galeria</span>
-    </button>
+    <!-- câmera abre direto a câmera no celular; galeria abre os arquivos/fotos -->
+    <input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="fileGal" accept="image/*" hidden>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn" id="cam">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1.2l.9-1.6A1.5 1.5 0 0 1 8.9 3.6h6.2c.6 0 1.1.3 1.3.8L17.3 6h1.2A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.5" r="3.6"/></svg>
+        Tirar foto
+      </button>
+      <button class="btn sec" id="gal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 17l4.5-4.5 3.5 3 3-3L20 16"/></svg>
+        <span id="galLabel">Escolher da galeria</span>
+      </button>
+    </div>
 
     <!-- ajuste -->
     <div id="adjust" style="display:none">
@@ -131,7 +139,6 @@
       <div class="mini-row">
         <button class="mini" id="rotate">↻ Girar</button>
         <button class="mini" id="reset">⟲ Centralizar</button>
-        <button class="mini" id="change">Trocar foto</button>
       </div>
     </div>
   </div>
@@ -231,11 +238,12 @@
   }
   $("applyCustom").onclick=applyCustom;
 
-  // ----- carregar foto -----
-  $("pick").onclick=()=>$("file").click();
-  $("change").onclick=()=>$("file").click();
-  $("file").onchange=async e=>{
+  // ----- carregar foto (câmera ou galeria) -----
+  $("cam").onclick=()=>$("fileCam").click();
+  $("gal").onclick=()=>$("fileGal").click();
+  async function handleFile(e){
     const file=e.target.files&&e.target.files[0];
+    e.target.value="";
     if(!file) return;
     showToast("Carregando foto…",true);
     try{
@@ -247,13 +255,14 @@
       $("zoom").value=100; $("zoomVal").textContent="100%";
       stage.classList.add("has-photo");
       $("adjust").style.display="block";
-      $("pickLabel").textContent="Trocar foto";
+      $("galLabel").textContent="Trocar foto";
       ["png","pdf","wpp"].forEach(id=>$(id).disabled=false);
       hideToast();
       render();
     }catch(err){ console.error(err); showToast("Não consegui abrir essa imagem 😕"); }
-    e.target.value="";
-  };
+  }
+  $("fileCam").onchange=handleFile;
+  $("fileGal").onchange=handleFile;
   function loadViaImg(file){
     return new Promise((res,rej)=>{
       const u=URL.createObjectURL(file), im=new Image();
